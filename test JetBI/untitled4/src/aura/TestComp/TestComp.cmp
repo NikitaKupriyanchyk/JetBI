@@ -1,0 +1,84 @@
+<!--
+ - Created by 37529 on 14.10.2019.
+ -->
+
+<aura:component description="TestComp"
+                controller="TestCompController"
+                implements="force:hasRecordId,force:hasSObjectName,flexipage:availableForRecordHome"
+                access="global">
+
+    <aura:attribute name="newTransaction"
+                    type="Transaction__c"
+                    default="{ 'sobjectType': 'Transaction__c'}"
+    />
+    <aura:attribute name="transaction" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <lightning:button variant="brand"
+                      label="+ Add Transaction"
+                      title="+ Add Transaction"
+                      onclick="{! c.openAddTransactionModalWindow }"/>
+
+    <lightning:datatable data="{! v.transaction }"
+                         columns="{! v.mycolumns }"
+                         keyField="Id"
+                         hideCheckboxColumn="true"
+                         title="Transactions"
+                         showRowNumberColumn="true"
+                         id="transactionsTable"
+    />
+
+    <aura:if isTrue="{!v.isOpen}">
+        <section role="dialog"
+                 tabindex="-1"
+                 aria-labelledby="modal-heading-01"
+                 aria-modal="true"
+                 aria-describedby="modal-content-id-1"
+                 class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Transaction</h2>
+                </header>
+                <div style="background-color: aliceblue">
+                    <lightning:input name="TransactionName"
+                                     label="Name"
+                                     value='{!v.newTransaction.Name}'
+                                     maxlength="18"
+                                     type="text"
+                                     required="true"
+
+                    />
+                    <lightning:input name="TransactionValue"
+                                     label="Value"
+                                     value='{!v.newTransaction.Value__c}'
+                                     type="number"
+                                     messageWhenPatternMismatch="Too many characters!"
+                                     pattern=".{0,5}"
+                                     maxlength="3"
+                                     onchange="{!c.CheckLength}"
+                                     aura:id="number"
+                                     required="true"
+                    />
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral"
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeAddTransactionModalWindow }"/>
+                    <lightning:button variant="brand"
+                                      label="Add and Close"
+                                      title="Add and Close"
+                                      onclick="{! c.addAndCloseAddTransactionModalWindow }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>
